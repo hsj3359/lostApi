@@ -1,13 +1,14 @@
+import csv
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import re
 import urllib.parse
 import sqlite3
 
-total = list()
+
 def main():
     name = ["메난민받아주세요", "에플릿", "미래의미중년", "쓸데없이멋있는모코코", "12글자나되니까꽉채웠음", "발헤임할꺼에요", "아리아나그렇죠", "아이스바닐라커피"]
-
+    tampTotal = list()
     for i in range(0, len(name)):
         changeName = urllib.parse.quote(name[i])
         html = urlopen("https://lostark.game.onstove.com/Profile/Character/" + changeName)
@@ -40,17 +41,28 @@ def main():
             job = job.replace("'","")
             if int(level) >=50:
                 data = [nickName, int(itamLevel), job, i]
-                total.append(data)
-
+                tampTotal.append(data)
+    return tampTotal
 
 
 conn = sqlite3.connect("lostParty.db", isolation_level=None)
 c = conn.cursor()
+conn.execute("DELETE FROM userTable").rowcount
+conn.execute("DELETE FROM partyTable").rowcount
 c.execute("CREATE TABLE IF NOT EXISTS userTable \
     (name text PRIMARY KEY, itameLevel inteager, job text, origin inteager)")
 
-main()
+c.execute("CREATE TABLE IF NOT EXISTS partyTable \
+   (name text PRIMARY KEY, orehaNomal inteager, orehaHard inteager, argos1 inteager, argos2 inteager, argos3 inteager, baltanNomal inteager, viakissNomal inteager, baltanHard inteager, viakissHard inteager)")
+
+total = main()
+# with open('partylist.csv', 'w', encoding='utf-8-sig', newline='') as file:
+#     write = csv.writer(file)
+#     write.writerows(total)
 for i in total:
     data = "INSERT INTO userTable \
 VALUES('"+i[0]+"',"+ str(i[1])+",'"+i[2]+"',"+str(i[3]) +")"
     c.execute(data)
+    partyData = "INSERT INTO partyTable \
+VALUES('"+i[0]+"',0,0,0,0,0,0,0,0,0)"
+    c.execute(partyData)
