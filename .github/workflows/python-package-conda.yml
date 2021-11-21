@@ -36,3 +36,18 @@ jobs:
       run: |
         conda install pytest
         pytest
+        
+    - name: Run Scraper with python
+      run: |
+        python "test.py"
+    - name: Commits
+      run: |
+        git config --local user.email "hsj3359@gmail.com"
+        git config --local user.name "Auto_Scraping_Name" # 커밋에 포함될 이름
+        git add news.json
+        git commit -m "Auto - Update data with Scraping" # 커밋 메세지
+    - name: Push
+      uses: ad-m/github-push-action@master
+      with:
+        branch: 'master'
+        github_token: $ 
