@@ -30,7 +30,7 @@ jobs:
         git add -A
         git commit -m "Auto - Update data with Scraping" # 커밋 메세지
     - name: Push
-      uses: ad-m/github-push-action@master
+      uses: ad-m/github-push-action@main
       with:
-        branch: 'master'
+        branch: 'main'
         github_token: $ 
