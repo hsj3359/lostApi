@@ -60,9 +60,6 @@ def main():
 # c.execute("CREATE TABLE IF NOT EXISTS dailyTask \
 #     (name text PRIMARY KEY REFERENCES userTable(name), chaos inteager, guardian inteager, epona inteager, viewData inteager)")
 total = main()
-with open('partylist.csv', 'w', encoding='utf-8-sig', newline='') as file:
-     write = csv.writer(file)
-     write.writerows(total)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(BASE_DIR, 'news.json'), 'w+',encoding='utf-8') as json_file:
     json.dump(total, json_file, ensure_ascii = False, indent='\t')
