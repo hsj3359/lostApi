@@ -1,17 +1,30 @@
-import csv
 import os
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import re
 import urllib.parse
-import sqlite3
 import json
+import requests
+import datetime
 
+def returnData(data):
+    data = data.replace('"', "")
+    data = data.replace('\n', "")
+    data = data.replace(' ', "")
+    data = data.replace("[", "")
+    data = data.replace("]", "")
+    data = data.replace("(", "")
+    data = data.replace(")", "")
+    data = data.split(',')
+    return data
 
 def main():
-    name = ["메난민받아주세요", "미래의미중년", "쓸데없이멋있는모코코", "발헤임할꺼에요", "아리아나그렇죠", "아이스바닐라커피","에플릿"]
+    name= requests.get("http://127.0.0.1:5000/findUser").text
     tampTotal = list()
+    name = returnData(name)
+    print(name)
     for i in range(0, len(name)):
+        print(name[i])
         changeName = urllib.parse.quote(name[i])
         html = urlopen("https://lostark.game.onstove.com/Profile/Character/" + changeName)
         bsObject = BeautifulSoup(html, "html.parser")
@@ -46,31 +59,13 @@ def main():
                 tampTotal.append(data)
     return tampTotal
 
-# conn = sqlite3.connect("lostParty.db", isolation_level=None)
-# # conn.execute("DELETE FROM userTable").rowcount
-# # conn.execute("DELETE FROM partyTable").rowcount
-# # conn.execute("DELETE FROM dailyTask").rowcount
-# c = conn.cursor()
-# c.execute("CREATE TABLE IF NOT EXISTS userTable \
-#     (name text PRIMARY KEY, itameLevel inteager, job text, origin inteager)")
-# # c.execute("CREATE TABLE IF NOT EXISTS partyTable \
-# #    (name text PRIMARY KEY REFERENCES userTable(name), orehaNomal inteager, orehaHard inteager, argos1 inteager, argos2 inteager, argos3 inteager, baltanNomal inteager, viakissNomal inteager, baltanHard inteager, viakissHard inteager, kukusatean inteager, abrellshud1 inteager, abrellshud2 ineager, abrellshud3 ineager)")
-# c.execute("CREATE TABLE IF NOT EXISTS partyTable \
-#    (name text PRIMARY KEY REFERENCES userTable(name), oreha inteager, argos inteager, baltanNomal inteager, viakissNomal inteager, baltanHard inteager, viakissHard inteager, kukusaten inteager, abrellshude inteager)")
-# c.execute("CREATE TABLE IF NOT EXISTS dailyTask \
-#     (name text PRIMARY KEY REFERENCES userTable(name), chaos inteager, guardian inteager, epona inteager, viewData inteager)")
 total = main()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+now = datetime.datetime.now()
+tempArray = []
+tempArray.append(str(now))
+total.append(tempArray)
 with open(os.path.join(BASE_DIR, 'news.json'), 'w+',encoding='utf-8') as json_file:
     json.dump(total, json_file, ensure_ascii = False, indent='\t')
 
-# for i in total:
-#     data = "INSERT INTO userTable \
-# VALUES('"+i[0]+"',"+ str(i[1])+",'"+i[2]+"',"+str(i[3]) +")"
-#     c.execute(data)
-#     partyData = "INSERT INTO partyTable \
-# VALUES('"+i[0]+"',0,0,0,0,0,0,0,0)"
-#     c.execute(partyData)
-#     dailyTask = "INSERT INTO dailyTask \
-#     VALUES('" + i[0] + "',0,0,0,0)"
-#     c.execute(dailyTask)
+res = requests.post("http://127.0.0.1:5000/sendUserData", data=json.dumps(total))
