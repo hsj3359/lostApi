@@ -19,7 +19,7 @@ def returnData(data):
     return data
 
 def main():
-    name= requests.get("http://127.0.0.1:5000/findUser").text
+    name= requests.get("http://3359jun.pythonanywhere.com/findUser").text
     tampTotal = list()
     name = returnData(name)
     print(name)
@@ -68,4 +68,4 @@ total.append(tempArray)
 with open(os.path.join(BASE_DIR, 'news.json'), 'w+',encoding='utf-8') as json_file:
     json.dump(total, json_file, ensure_ascii = False, indent='\t')
 
-res = requests.post("http://127.0.0.1:5000/sendUserData", data=json.dumps(total))
+res = requests.post("http://3359jun.pythonanywhere.com/sendUserData", data=json.dumps(total))
